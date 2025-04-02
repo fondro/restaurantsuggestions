@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Boston Restaurant Recommender</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      margin: 2rem;
+    }
+    label, select, input, button {
+      display: block;
+      margin: 0.5rem 0;
+    }
+    #results {
+      margin-top: 2rem;
+      padding: 1rem;
+      border: 1px solid #ccc;
+    }
+    .restaurant {
+      margin-bottom: 1rem;
+    }
+  </style>
+</head>
+<body>
+  <h1>Find Restaurants in Boston</h1>
+  <form id="restaurantForm">
+    <label>Meal Type:
+      <select id="meal">
+        <option value="">Any</option>
+        <option value="breakfast">Breakfast</option>
+        <option value="lunch">Lunch</option>
+        <option value="dinner">Dinner</option>
+      </select>
+    </label>
+    <label>Cuisine (Country):
+      <input type="text" id="cuisine" placeholder="e.g. Italian, Japanese" />
+    </label>
+    <label>Location in Boston:
+      <input type="text" id="location" placeholder="e.g. Back Bay, Allston" />
+    </label>
+    <button type="submit">Get Recommendations</button>
+  </form>
+
+  <div id="results"></div>
+
+  <script>
+    const form = document.getElementById("restaurantForm");
+    const results = document.getElementById("results");
+
+    const restaurants = [
+      { name: "Tatte Bakery", location: "Back Bay", cuisine: "French", meals: ["breakfast", "lunch"] },
+      { name: "Santouka Ramen", location: "Harvard Square", cuisine: "Japanese", meals: ["lunch", "dinner"] },
+      { name: "Giacomo's", location: "North End", cuisine: "Italian", meals: ["dinner"] },
+      { name: "Shōjō", location: "Chinatown", cuisine: "Asian Fusion", meals: ["dinner"] },
+      { name: "Lulu's Allston", location: "Allston", cuisine: "American", meals: ["breakfast", "lunch", "dinner"] },
+      { name: "Myers + Chang", location: "South End", cuisine: "Chinese", meals: ["lunch", "dinner"] }
+    ];
+
+    form.addEventListener("submit", (e) => {
+      e.preventDefault();
+      const meal = document.getElementById("meal").value.toLowerCase();
+      const cuisine = document.getElementById("cuisine").value.trim().toLowerCase();
+      const location = document.getElementById("location").value.trim().toLowerCase();
+
+      const matches = restaurants.filter(r => {
+        const matchMeal = meal === "" || r.meals.map(m => m.toLowerCase()).includes(meal);
+        const matchCuisine = cuisine === "" || r.cuisine.toLowerCase().includes(cuisine);
+        const matchLocation = location === "" || r.location.toLowerCase().includes(location);
+        return matchMeal && matchCuisine && matchLocation;
+      });
+
+      results.innerHTML = "";
+      if (matches.length > 0) {
+        results.innerHTML = `<p>Found ${matches.length} match(es):</p>`;
+        matches.forEach(r => {
+          results.innerHTML += `<div class="restaurant"><strong>${r.name}</strong><br>${r.cuisine} - ${r.location}<br>Serves: ${r.meals.join(", ")}</div>`;
+        });
+      } else {
+        results.innerHTML = "<p>No matches found. Try changing your search.</p>";
+      }
+    });
+  </script>
+</body>
+</html>
